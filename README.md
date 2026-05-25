@@ -34,19 +34,21 @@ pacman -S mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-gcc
 make
 ```
 
+Output (exe + SDL DLLs) goes to `build/`.
+
 ### Linux
 ```bash
 sudo apt install libsdl2-dev libsdl2-ttf-dev g++
 make
 ```
 
-### Manual compilation
+## Running
+
 ```bash
-g++ -std=c++17 -O2 -Wall $(sdl2-config --cflags) \
-    -Ivendor/imgui -Ivendor/imgui/backends \
-    src/*.cpp vendor/imgui/*.cpp vendor/imgui/backends/imgui_impl_sdl2.cpp vendor/imgui/backends/imgui_impl_sdlrenderer2.cpp \
-    $(sdl2-config --libs) -lSDL2_ttf -o moptracker
+make run
 ```
+
+Or copy the `build/` folder to another Windows PC and launch `moptracker.exe` directly (SDL2.dll and SDL2_ttf.dll are bundled).
 
 ## Project Structure
 
@@ -63,7 +65,9 @@ moptracker/
 │   ├── tasks.h/cpp       # Task management (CRUD, ordering)
 │   ├── intervals.h/cpp   # Interval management (tracking, splitting)
 │   └── persistence.h/cpp # JSON file save/load
+├── build/                # Build output (exe + SDL DLLs)
 ├── vendor/
+│   ├── dll/              # Bundled SDL2 + SDL2_ttf DLLs
 │   ├── SDL2-2.32.10/     # SDL2 development files
 │   └── imgui/            # Dear ImGui library
 ├── Makefile

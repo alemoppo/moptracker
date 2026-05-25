@@ -264,22 +264,27 @@ void AppGUI::render_task_button(Task& task, float width) {
 void AppGUI::render_add_task_dialog() {
     if (!show_add_dialog) return;
 
+    auto commit = [&]() {
+        if (new_task_name[0] != '\0') {
+            task_mgr.add_task(std::string(new_task_name));
+            save_state();
+            show_add_dialog = false;
+            ImGui::CloseCurrentPopup();
+        }
+    };
+
     ImGui::OpenPopup(tr("Add Task", "Aggiungi Task"));
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
     if (ImGui::BeginPopupModal(tr("Add Task", "Aggiungi Task"), &show_add_dialog, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::Text("%s", tr("Task Name:", "Nome Task:"));
-        ImGui::InputText("##name", new_task_name, NEW_TASK_BUF);
+        ImGui::SetKeyboardFocusHere(0);
+        if (ImGui::InputText("##name", new_task_name, NEW_TASK_BUF, ImGuiInputTextFlags_EnterReturnsTrue))
+            commit();
 
-        if (ImGui::Button(tr("Create", "Crea"), ImVec2(DIALOG_BTN_W, 0))) {
-            if (new_task_name[0] != '\0') {
-                task_mgr.add_task(std::string(new_task_name));
-                save_state();
-                show_add_dialog = false;
-                ImGui::CloseCurrentPopup();
-            }
-        }
+        if (ImGui::Button(tr("Create", "Crea"), ImVec2(DIALOG_BTN_W, 0)))
+            commit();
         ImGui::SameLine();
         if (ImGui::Button(tr("Cancel", "Annulla"), ImVec2(DIALOG_BTN_W, 0))) {
             show_add_dialog = false;
